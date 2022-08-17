@@ -1,11 +1,12 @@
 package com.alba.depositreminder.controller;
 
-import static com.alba.depositreminder.util.DepositUtil.computeProfit;
+import static com.alba.depositreminder.util.DepositUtil.convertToDeposit;
+import static com.alba.depositreminder.util.DepositUtil.convertToDtoList;
 
 import com.alba.depositreminder.dto.DepositDto;
+import com.alba.depositreminder.model.Bank;
 import com.alba.depositreminder.model.Contribution;
 import com.alba.depositreminder.model.Deposit;
-import com.alba.depositreminder.model.PercentageType;
 import com.alba.depositreminder.service.BankService;
 import com.alba.depositreminder.service.ContributionService;
 import com.alba.depositreminder.service.DepositService;
@@ -32,19 +33,22 @@ public class DepositController {
 
   @GetMapping
   public List<DepositDto> getAllWithBanks() {
-    return convertToDtoList(depositService.getAllWithBanks());
+    List<Contribution> contributions = contributionService.getAll();
+    return convertToDtoList(depositService.getAllWithBanks(), contributions);
   }
 
   @PostMapping
   public void addNew(@RequestBody @Valid DepositDto depositDto) {
-    Deposit savedDeposit = depositService.save(convertToDeposit(depositDto));
+    Bank bank = bankService.getByNameOrAddNew(depositDto.getBankName());
+    Deposit savedDeposit = depositService.save(convertToDeposit(depositDto, bank));
     contributionService.save(
         new Contribution(depositDto.getOpenDate(), depositDto.getSum(), savedDeposit));
   }
 
   @PutMapping("/{id}")
   public void update(@PathVariable int id, @RequestBody @Valid DepositDto depositDto) {
-    Deposit deposit = convertToDeposit(depositDto);
+    Bank bank = bankService.getByNameOrAddNew(depositDto.getBankName());
+    Deposit deposit = convertToDeposit(depositDto, bank);
     deposit.setId(id);
     depositService.save(deposit);
   }
@@ -54,39 +58,4 @@ public class DepositController {
     depositService.delete(id);
   }
 
-  private Deposit convertToDeposit(DepositDto depositDto) {
-    return new Deposit(
-        depositDto.getName(),
-        depositDto.getOpenDate(),
-        depositDto.getDurationDays(),
-        depositDto.getSum(),
-        depositDto.getYearPercent(),
-        PercentageType.valueOf(depositDto.getPercentageType()),
-        bankService.getByNameOrAddNew(depositDto.getBankName())
-    );
-  }
-
-
-  private List<DepositDto> convertToDtoList(List<Deposit> depositList) {
-    return depositList.stream()
-        .map(this::convertToDto)
-        .toList();
-  }
-
-  private DepositDto convertToDto(Deposit deposit) {
-    List<Contribution> contributions = contributionService.getAllByDeposit(deposit.getId());
-    return DepositDto.builder()
-        .id(deposit.getId())
-        .name(deposit.getName())
-        .openDate(deposit.getOpenDate())
-        .closeDate(deposit.getOpenDate().plusDays(deposit.getDaysNumber()))
-        .durationDays(deposit.getDaysNumber())
-        .sum(contributions.stream().mapToDouble(Contribution::getSum).sum())
-        .yearPercent(deposit.getYearPercent())
-        .percentageType(deposit.getPercentageType().name())
-        .bankName(deposit.getBank().getName())
-        .profit(Math.round(computeProfit(deposit, contributions) * 100 / 100.0))
-        .contributionList(contributions)
-        .build();
-  }
 }

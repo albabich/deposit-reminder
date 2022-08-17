@@ -24,16 +24,18 @@ public class DepositDto {
   private LocalDate openDate;
 
   private LocalDate closeDate;
-  @NotNull
-  private int durationDays;
+
+  private Integer durationDays;
   @Min(0)
   private double sum;
   @Min(0)
   private double yearPercent;
   @NotNull
   private String percentageType;
+  @NotNull
+  private boolean capitalization;
 
-  private List<Contribution> contributionList;
+  private List<ContributionDto> contributionList;
   @NotBlank
   private String bankName;
 

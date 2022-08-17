@@ -29,4 +29,8 @@ public class ContributionService {
     return contributionRepository.findById(id)
         .orElseThrow(() -> new ApiRequestException("Contribution %d not exist".formatted(id)));
   }
+
+  public List<Contribution> getAll() {
+    return contributionRepository.findAll();
+  }
 }

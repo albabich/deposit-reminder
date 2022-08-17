@@ -33,8 +33,11 @@ public class Deposit {
   @Column(name = "open_date")
   private LocalDate openDate;
 
-  @Column(name = "days_number")
-  private int daysNumber;
+  @Column(name = "close_date")
+  private LocalDate closeDate;
+
+//  @Column(name = "days_number")
+//  private int daysNumber;
 
   @Column(name = "initial_sum")
   private double initialSum;
@@ -45,6 +48,9 @@ public class Deposit {
   @Enumerated(EnumType.STRING)
   @Column(name = "percentage_type")
   private PercentageType percentageType;
+
+  @Column(name = "capitalization")
+  private boolean capitalization;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "bank_id", nullable = false)
@@ -58,14 +64,15 @@ public class Deposit {
 //  private List<Contribution> contributionList;
 
 
-  public Deposit(String name, LocalDate openDate, int daysNumber, double initialSum,
-      double yearPercent, PercentageType percentageType, Bank bank) {
+  public Deposit(String name, LocalDate openDate, LocalDate closeDate, double initialSum,
+      double yearPercent, PercentageType percentageType, boolean capitalization, Bank bank) {
     this.name = name;
     this.openDate = openDate;
-    this.daysNumber = daysNumber;
+    this.closeDate = closeDate;
     this.initialSum = initialSum;
     this.yearPercent = yearPercent;
     this.percentageType = percentageType;
+    this.capitalization = capitalization;
     this.bank = bank;
   }
 }

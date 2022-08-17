@@ -6,5 +6,6 @@ public enum PercentageType {
   SEMIANNUALLY,
   QUARTERLY,
   MONTHLY,
+  MONTHLY_ON_DEPOSIT_DAY,
   DAILY
 }

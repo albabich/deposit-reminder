@@ -7,15 +7,15 @@ import Footer from "./Footer";
 import "./App.css";
 import {
   getAllDeposits,
+  addNewDeposit,
   updateDeposit,
   deleteDeposit,
   deleteContribution,
+  addNewContribution,
   updateContribution,
 } from "./client";
-import AddDepositForm from "./forms/AddDepositForm";
-import EditDepositForm from "./forms/EditDepositForm";
-import ContributeDepositForm from "./forms/ContributeDepositForm";
-import EditContributionForm from "./forms/EditContributionForm";
+import DepositForm from "./forms/DepositForm";
+import ContributionForm from "./forms/ContributionForm";
 
 import { errorNotification } from "./Notification";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -73,7 +73,7 @@ class App extends Component {
   closeEditContributionModal = () =>
     this.setState({ isEditContributionModalVisible: false });
 
-  openNotificationWithIcon = () => (type, message, description) =>
+  openNotificationWithIcon = (type, message, description) =>
     notification[type]({ message, description });
 
   fetchDeposits = () => {
@@ -91,9 +91,11 @@ class App extends Component {
         })
       )
       .catch((error) => {
-        console.log(error.error);
-        const message = error.error.message;
-        const description = error.error.httpStatus;
+        console.log(error);
+        const message = error.error? error.error.message : 'Something went wrong'
+        // const message = error;
+        const description = error.error.httpStatus ? error.error.httpStatus : "500";
+        // const description = error;
         errorNotification(message, description);
         this.setState({
           isFetching: false,
@@ -105,6 +107,14 @@ class App extends Component {
     this.setState({ selectedDeposit });
     this.openEditDepositModal();
   };
+
+  addDepositFormSubmitter = (deposit) => {
+    addNewDeposit(deposit)
+    .then(() =>{
+      this.closeAddDepositModal();
+      this.fetchDeposits();
+    })
+  }
 
   updateDepositFormSubmitter = (deposit) => {
     updateDeposit(deposit.id, deposit)
@@ -136,6 +146,27 @@ class App extends Component {
     this.setState({ selectedContribution });
     this.openEditContributionModal();
   };
+
+  addContributionFormSubmitter = (contribution) => {
+    addNewContribution(contribution)
+    .then(() => {
+      this.openNotificationWithIcon(
+        "success",
+        "Contribution ",
+        "was added"
+      );
+      this.closeContributeDepositModal();
+      this.fetchDeposits();
+  })
+  .catch((err) => {
+    console.error(err.error);
+    this.openNotificationWithIcon(
+      "error",
+      "error",
+      `(${err.error.httpStatus}) ${err.error.message}`
+    );
+  });
+};
 
   updateContributionFormSubmitter = (contribution) => {
     updateContribution(contribution.id, contribution)
@@ -236,16 +267,9 @@ class App extends Component {
           onCancel={this.closeAddDepositModal}
           width={500}
         >
-          <AddDepositForm
-            onSuccess={() => {
-              this.closeAddDepositModal();
-              this.fetchDeposits();
-            }}
-            onFailure={(error) => {
-              const message = error.error.message;
-              const description = error.error.httpStatus;
-              errorNotification(message, description);
-            }}
+          <DepositForm
+            submitter={this.addDepositFormSubmitter}
+
           />
         </Modal>
 
@@ -259,7 +283,7 @@ class App extends Component {
         >
           <PageHeader title={`${this.state.selectedDeposit.id}`} />
 
-          <EditDepositForm
+          <DepositForm
             initialValues={this.state.selectedDeposit}
             submitter={this.updateDepositFormSubmitter}
           />
@@ -270,21 +294,15 @@ class App extends Component {
           visible={this.state.isContributeDepositModalVisible}
           onOk={this.closeContributeDepositModal}
           onCancel={this.closeContributeDepositModal}
+          destroyOnClose={true}
           width={300}
         >
-          <PageHeader title={`${this.state.selectedDeposit.id}`} />
+          <PageHeader title={`${this.state.selectedDeposit.name}`} />
 
-          <ContributeDepositForm
-            onSuccess={() => {
-              this.closeContributeDepositModal();
-              this.fetchDeposits();
-            }}
-            onFailure={(error) => {
-              const message = error.error.message;
-              const description = error.error.httpStatus;
-              errorNotification(message, description);
-            }}
+          <ContributionForm
+            submitter={this.addContributionFormSubmitter}
             depositId={this.state.selectedDeposit.id}
+            initialValues = {{date:`${new Date().toLocaleDateString("en-CA")}`}}
           />
         </Modal>
 
@@ -298,7 +316,7 @@ class App extends Component {
         >
           <PageHeader title={`${this.state.selectedContribution.id}`} />
 
-          <EditContributionForm
+          <ContributionForm
             initialValues={this.state.selectedContribution}
             submitter={this.updateContributionFormSubmitter}
           />
@@ -454,7 +472,7 @@ class App extends Component {
           sorter: (a, b) => Date.parse(a.openDate) - Date.parse(b.openDate),
         },
         {
-          title: "Duration, days",
+          title: "Duration",
           dataIndex: "durationDays",
           key: "durationDays",
         },
@@ -466,7 +484,7 @@ class App extends Component {
           sorter: (a, b) => Date.parse(a.closeDate) - Date.parse(b.closeDate),
         },
         {
-          title: "Percentage",
+          title: "Percent",
           dataIndex: "yearPercent",
           key: "yearPercent",
         },
@@ -476,7 +494,7 @@ class App extends Component {
           key: "percentageType",
         },
         {
-          title: "Capitalization",
+          title: "Capa",
           dataIndex: "capitalization",
           key: "capitalization",
           render: (text, deposit) => (
@@ -547,7 +565,7 @@ class App extends Component {
             // handleAddDepositClickEvent={this.openAddDepositModal}
           />
           <Table
-            style={{ marginBottom: "100px", marginTop: "30px" }}
+            style={{marginBottom: '100px'}}
             dataSource={deposits}
             expandable={{
               expandedRowRender,

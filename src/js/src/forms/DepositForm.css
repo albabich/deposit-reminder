@@ -1,0 +1,43 @@
+input[type="checkbox"] {
+  display: inline;
+  width: 23px;
+  height: 23px;
+  margin-right: 15px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+select {
+  height: 30px;
+  margin-bottom: 15px;
+  padding: 0px 1px 1px 7px;
+  font-size: 14px;
+  text-align: left;
+  display: block;
+  
+  appearance: none;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  color: rgba(0, 0, 0, 0.85);
+  border-radius: 2px;
+  cursor: pointer;
+  /* &:focus {
+    outline: 1px solid #f57507;
+  } */
+}
+
+select:required:invalid {
+  color: #d9d9d9;
+}
+select:invalid > option[value=""][disabled] {
+  display: none;
+}
+
+option {
+  color: rgba(0, 0, 0, 0.85);;
+}

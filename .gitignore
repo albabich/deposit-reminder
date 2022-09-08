@@ -34,4 +34,4 @@ build/
 
 ### JS ###
 node_modules
-src/js/node/
+node

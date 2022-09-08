@@ -43,6 +43,10 @@
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
     </dependency>
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
@@ -76,7 +80,6 @@
                 </goals>
                 <configuration>
                   <nodeVersion>${node.version}</nodeVersion>
-<!--                  <npmVersion>${npm.version}</npmVersion>-->
                 </configuration>
               </execution>
               <execution>

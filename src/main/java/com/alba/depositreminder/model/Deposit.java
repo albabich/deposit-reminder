@@ -36,9 +36,6 @@ public class Deposit {
   @Column(name = "close_date")
   private LocalDate closeDate;
 
-//  @Column(name = "days_number")
-//  private int daysNumber;
-
   @Column(name = "initial_sum")
   private double initialSum;
 
@@ -56,13 +53,6 @@ public class Deposit {
   @JoinColumn(name = "bank_id", nullable = false)
   @ToString.Exclude
   private Bank bank;
-
-//  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "deposit")
-////  @OnDelete(action = OnDeleteAction.CASCADE)
-//  @JsonManagedReference
-//  @ToString.Exclude
-//  private List<Contribution> contributionList;
-
 
   public Deposit(String name, LocalDate openDate, LocalDate closeDate, double initialSum,
       double yearPercent, PercentageType percentageType, boolean capitalization, Bank bank) {

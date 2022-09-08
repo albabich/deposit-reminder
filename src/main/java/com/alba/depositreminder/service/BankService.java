@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BankService {
 
   private final BankRepository bankRepository;
-@Transactional
+
+  @Transactional
   public Bank getByNameOrAddNew(String bankName) {
     Optional<Bank> optionalBank = bankRepository.getByName(bankName);
     return optionalBank.orElseGet(() -> create(bankName));

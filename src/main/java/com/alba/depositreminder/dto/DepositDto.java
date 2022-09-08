@@ -1,6 +1,5 @@
 package com.alba.depositreminder.dto;
 
-import com.alba.depositreminder.model.Contribution;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.Min;

@@ -32,10 +32,13 @@ public class DepositService {
   }
 
   @Transactional
-  public void delete(int id) {depositRepository.deleteById(id);}
+  public void delete(int id) {
+    depositRepository.deleteById(id);
+  }
 
   public Deposit getById(Integer id) {
     Optional<Deposit> optionalDeposit = depositRepository.findById(id);
-    return optionalDeposit.orElseThrow(()->new ApiRequestException("Deposit %d not exist".formatted(id)));
+    return optionalDeposit.orElseThrow(
+        () -> new ApiRequestException("Deposit %d not exist".formatted(id)));
   }
 }

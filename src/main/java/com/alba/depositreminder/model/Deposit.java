@@ -12,12 +12,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "deposit")
 public class Deposit {
@@ -54,15 +58,4 @@ public class Deposit {
   @ToString.Exclude
   private Bank bank;
 
-  public Deposit(String name, LocalDate openDate, LocalDate closeDate, double initialSum,
-      double yearPercent, PercentageType percentageType, boolean capitalization, Bank bank) {
-    this.name = name;
-    this.openDate = openDate;
-    this.closeDate = closeDate;
-    this.initialSum = initialSum;
-    this.yearPercent = yearPercent;
-    this.percentageType = percentageType;
-    this.capitalization = capitalization;
-    this.bank = bank;
-  }
 }

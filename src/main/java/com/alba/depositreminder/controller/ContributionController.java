@@ -46,10 +46,10 @@ public class ContributionController {
     if (depositId == null) {
       throw new ApiRequestException("New contribution must have depositId");
     }
-    return new Contribution(
-        contributionDto.getDate(),
-        contributionDto.getSum(),
-        depositService.getById(depositId)
-    );
+    return Contribution.builder()
+        .date(contributionDto.getDate())
+        .sum(contributionDto.getSum())
+        .deposit(depositService.getById(depositId))
+        .build();
   }
 }

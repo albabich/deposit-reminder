@@ -42,7 +42,11 @@ public class DepositController {
     Bank bank = bankService.getByNameOrAddNew(depositDto.getBankName());
     Deposit savedDeposit = depositService.save(convertToDeposit(depositDto, bank));
     contributionService.save(
-        new Contribution(depositDto.getOpenDate(), depositDto.getSum(), savedDeposit));
+        Contribution.builder()
+            .date(depositDto.getOpenDate())
+            .sum(depositDto.getSum())
+            .deposit(savedDeposit)
+            .build());
   }
 
   @PutMapping("/{id}")

@@ -23,16 +23,16 @@ public class DepositUtil {
     }
     LocalDate closeDate = depositDto.getCloseDate() != null ? depositDto.getCloseDate()
         : depositDto.getOpenDate().plusDays(depositDto.getDurationDays());
-    return new Deposit(
-        depositDto.getName(),
-        depositDto.getOpenDate(),
-        closeDate,
-        depositDto.getSum(),
-        depositDto.getYearPercent(),
-        PercentageType.valueOf(depositDto.getPercentageType()),
-        depositDto.isCapitalization(),
-        bank
-    );
+    return Deposit.builder()
+        .name(depositDto.getName())
+        .openDate(depositDto.getOpenDate())
+        .closeDate(closeDate)
+        .initialSum(depositDto.getSum())
+        .yearPercent(depositDto.getYearPercent())
+        .percentageType(PercentageType.valueOf(depositDto.getPercentageType()))
+        .capitalization(depositDto.isCapitalization())
+        .bank(bank)
+        .build();
   }
 
   public static List<DepositDto> convertToDtoList(List<Deposit> depositList,
@@ -89,10 +89,11 @@ public class DepositUtil {
           periodEnd.plusDays(1).isAfter(deposit.getCloseDate()) ? deposit.getCloseDate()
               : periodEnd.plusDays(1);
       contributionsWithCapitalization.add(
-          new Contribution(
-              capitalizationDate,
-              Math.round(capitalization * 100) / 100.0,
-              deposit));
+          Contribution.builder()
+              .date(capitalizationDate)
+              .sum(Math.round(capitalization * 100) / 100.0)
+              .deposit(deposit)
+              .build());
     }
     return contributionsWithCapitalization;
   }

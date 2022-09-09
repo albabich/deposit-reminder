@@ -10,11 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "contribution")
 public class Contribution {
@@ -35,9 +39,4 @@ public class Contribution {
   @JoinColumn(name = "deposit_id", nullable = false)
   private Deposit deposit;
 
-  public Contribution(LocalDate date, double sum, Deposit deposit) {
-    this.date = date;
-    this.sum = sum;
-    this.deposit = deposit;
-  }
 }

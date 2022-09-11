@@ -25,7 +25,7 @@ public class Contribution {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Integer id;
 
   @Column(name = "date")
   private LocalDate date;

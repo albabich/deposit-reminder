@@ -367,7 +367,7 @@ class App extends Component {
                   cancelText="No"
                   onCancel={(e) => e.stopPropagation()}
                 >
-                  {record.id !== 0 ? (
+                  {record.id !== null ? (
                     <Button
                       type="danger"
                       size="small"
@@ -379,7 +379,7 @@ class App extends Component {
                     ""
                   )}
                 </Popconfirm>
-                {record.id !== 0 ? (
+                {record.id !== null ? (
                   <Button
                     style={{ marginLeft: "5px" }}
                     size="small"
@@ -418,7 +418,7 @@ class App extends Component {
             dataSource={data}
             pagination={false}
             rowClassName={(record, index) =>
-              record.id === 0 ? "green" : "white"
+              record.id === null ? "green" : "white"
             }
           />
         );

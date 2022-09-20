@@ -1,8 +1,8 @@
 package com.alba.depositreminder.dto;
 
 import java.time.LocalDate;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +19,10 @@ public class ContributionDto {
   @NotNull
   private LocalDate date;
 
-  @Min(0)
+  @Positive
+  @NotNull
   private Double sum;
 
+  @NotNull
   private Integer depositId;
 }

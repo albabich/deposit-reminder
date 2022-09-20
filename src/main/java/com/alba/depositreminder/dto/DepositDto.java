@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,11 +22,11 @@ public class DepositDto {
   private String name;
   @NotNull
   private LocalDate openDate;
-
+  @NotNull
   private LocalDate closeDate;
 
   private Integer durationDays;
-  @Min(0)
+  @Positive
   private double sum;
   @Min(0)
   private double yearPercent;

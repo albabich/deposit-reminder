@@ -1,6 +1,5 @@
 package com.alba.depositreminder.service;
 
-import com.alba.depositreminder.exception.ApiRequestException;
 import com.alba.depositreminder.model.Contribution;
 import com.alba.depositreminder.repository.ContributionRepository;
 import java.util.List;
@@ -26,8 +25,7 @@ public class ContributionService {
   }
 
   public Contribution getById(int id) {
-    return contributionRepository.findById(id)
-        .orElseThrow(() -> new ApiRequestException("Contribution %d not exist".formatted(id)));
+    return contributionRepository.getReferenceById(id);
   }
 
   public List<Contribution> getAll() {

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, {Component, Fragment} from "react";
 import moment from "moment";
 
 import Container from "./Container";
@@ -6,30 +6,30 @@ import Header from "./Header";
 import Footer from "./Footer";
 import "./App.css";
 import {
-  getAllDeposits,
-  addNewDeposit,
-  updateDeposit,
-  deleteDeposit,
-  deleteContribution,
   addNewContribution,
+  addNewDeposit,
+  deleteContribution,
+  deleteDeposit,
+  getAllDeposits,
   updateContribution,
+  updateDeposit,
 } from "./client";
 import DepositForm from "./forms/DepositForm";
 import ContributionForm from "./forms/ContributionForm";
 
-import { errorNotification } from "./Notification";
-import { LoadingOutlined } from "@ant-design/icons";
+import {errorNotification} from "./Notification";
+import {LoadingOutlined} from "@ant-design/icons";
 import {
-  Table,
   Avatar,
-  Spin,
-  Modal,
-  Space,
-  Empty,
-  PageHeader,
-  notification,
   Button,
+  Empty,
+  Modal,
+  notification,
+  PageHeader,
   Popconfirm,
+  Space,
+  Spin,
+  Table,
 } from "antd";
 
 const getIndicatorIcon = () => (
@@ -184,7 +184,7 @@ class App extends Component {
         this.openNotificationWithIcon(
           "error",
           "error",
-          `(${err.error.status}) ${err.error.error}`
+            `(${err.error.message}) ${err.error.httpStatus}`
         );
       });
   };
@@ -317,8 +317,9 @@ class App extends Component {
           <PageHeader title={`${this.state.selectedContribution.id}`} />
 
           <ContributionForm
-            initialValues={this.state.selectedContribution}
-            submitter={this.updateContributionFormSubmitter}
+              initialValues={this.state.selectedContribution}
+              depositId={this.state.selectedContribution.depositId}
+              submitter={this.updateContributionFormSubmitter}
           />
         </Modal>
 
@@ -405,6 +406,7 @@ class App extends Component {
             id: contrs[i].id,
             date: contrs[i].date,
             sum: contrs[i].sum,
+            depositId: record.id,
           });
         }
 
@@ -442,7 +444,7 @@ class App extends Component {
               size="large"
               style={{ backgroundColor: setAlarmByDate(deposit) }}
             >
-              {`${deposit.bankName.charAt(0).toUpperCase()}`}
+              {`${moment(deposit.closeDate).diff(new Date(), "days")}`}
             </Avatar>
           ),
         },

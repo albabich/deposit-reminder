@@ -1,13 +1,9 @@
 package com.alba.depositreminder.controller;
 
-import static com.alba.depositreminder.util.DepositUtil.convertToDeposit;
-import static com.alba.depositreminder.util.DepositUtil.convertToDtoList;
-
 import com.alba.depositreminder.dto.DepositDto;
-import com.alba.depositreminder.model.Bank;
+import com.alba.depositreminder.mapper.DepositMapper;
 import com.alba.depositreminder.model.Contribution;
 import com.alba.depositreminder.model.Deposit;
-import com.alba.depositreminder.service.BankService;
 import com.alba.depositreminder.service.ContributionService;
 import com.alba.depositreminder.service.DepositService;
 import java.util.List;
@@ -28,19 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class DepositController {
 
   private final DepositService depositService;
-  private final BankService bankService;
   private final ContributionService contributionService;
+  private final DepositMapper depositMapper;
 
   @GetMapping
   public List<DepositDto> getAllWithBanks() {
-    List<Contribution> contributions = contributionService.getAll();
-    return convertToDtoList(depositService.getAllWithBanks(), contributions);
+    return depositMapper.toDtoList(depositService.getAllWithBanks());
   }
 
   @PostMapping
   public void addNew(@RequestBody @Valid DepositDto depositDto) {
-    Bank bank = bankService.getByNameOrAddNew(depositDto.getBankName());
-    Deposit savedDeposit = depositService.save(convertToDeposit(depositDto, bank));
+    Deposit savedDeposit = depositService.save(depositMapper.toEntity(depositDto));
     contributionService.save(
         Contribution.builder()
             .date(depositDto.getOpenDate())
@@ -51,8 +45,7 @@ public class DepositController {
 
   @PutMapping("/{id}")
   public void update(@PathVariable int id, @RequestBody @Valid DepositDto depositDto) {
-    Bank bank = bankService.getByNameOrAddNew(depositDto.getBankName());
-    Deposit deposit = convertToDeposit(depositDto, bank);
+    Deposit deposit = depositMapper.toEntity(depositDto);
     deposit.setId(id);
     depositService.save(deposit);
   }

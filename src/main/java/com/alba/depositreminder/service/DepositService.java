@@ -1,10 +1,8 @@
 package com.alba.depositreminder.service;
 
-import com.alba.depositreminder.exception.ApiRequestException;
 import com.alba.depositreminder.model.Deposit;
 import com.alba.depositreminder.repository.DepositRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +35,6 @@ public class DepositService {
   }
 
   public Deposit getById(Integer id) {
-    Optional<Deposit> optionalDeposit = depositRepository.findById(id);
-    return optionalDeposit.orElseThrow(
-        () -> new ApiRequestException("Deposit %d not exist".formatted(id)));
+    return depositRepository.getReferenceById(id);
   }
 }

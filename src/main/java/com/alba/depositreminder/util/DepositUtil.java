@@ -1,13 +1,9 @@
 package com.alba.depositreminder.util;
 
-import com.alba.depositreminder.dto.DepositDto;
-import com.alba.depositreminder.exception.ApiRequestException;
-import com.alba.depositreminder.model.Bank;
 import com.alba.depositreminder.model.Contribution;
 import com.alba.depositreminder.model.Deposit;
 import com.alba.depositreminder.model.PercentageType;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,60 +13,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class DepositUtil {
 
-  public static Deposit convertToDeposit(DepositDto depositDto, Bank bank) {
-    if (depositDto.getDurationDays() == null && depositDto.getCloseDate() == null) {
-      throw new ApiRequestException("At least one of durationDays ore closeDate must present");
-    }
-    LocalDate closeDate = depositDto.getCloseDate() != null ? depositDto.getCloseDate()
-        : depositDto.getOpenDate().plusDays(depositDto.getDurationDays());
-    return Deposit.builder()
-        .name(depositDto.getName())
-        .openDate(depositDto.getOpenDate())
-        .closeDate(closeDate)
-        .initialSum(depositDto.getSum())
-        .yearPercent(depositDto.getYearPercent())
-        .percentageType(PercentageType.valueOf(depositDto.getPercentageType()))
-        .capitalization(depositDto.isCapitalization())
-        .bank(bank)
-        .build();
-  }
-
-  public static List<DepositDto> convertToDtoList(List<Deposit> depositList,
-      List<Contribution> contributions) {
-    ContributionUtil.convertToDtoList(contributions);
-    return depositList.stream()
-        .map(deposit -> convertToDto(deposit, contributions))
-        .toList();
-  }
-
-  private static DepositDto convertToDto(Deposit deposit, List<Contribution> contributions) {
-    List<Contribution> depositContributions = contributions.stream()
-        .filter(c -> c.getDeposit().equals(deposit))
-        .toList();
-    List<Contribution> contributionsWithPayments = addCapitalization(
-        depositContributions,
-        deposit);
-
-    double sumContributions = depositContributions.stream().mapToDouble(Contribution::getSum).sum();
-    double sumTotal = contributionsWithPayments.stream().mapToDouble(Contribution::getSum).sum();
-    return DepositDto.builder()
-        .id(deposit.getId())
-        .name(deposit.getName())
-        .openDate(deposit.getOpenDate())
-        .closeDate(deposit.getCloseDate())
-        .durationDays((int) ChronoUnit.DAYS.between(deposit.getOpenDate(), deposit.getCloseDate()))
-        .sum(sumContributions)
-        .yearPercent(deposit.getYearPercent())
-        .percentageType(deposit.getPercentageType().name())
-        .capitalization(deposit.isCapitalization())
-        .bankName(deposit.getBank().getName())
-        .profit(sumTotal)
-        .contributionList(ContributionUtil.convertToDtoList(contributionsWithPayments))
-        .build();
-  }
-
-
-  private static List<Contribution> addCapitalization(List<Contribution> contributions,
+  public static List<Contribution> addCapitalization(List<Contribution> contributions,
       Deposit deposit) {
     int daysInYear = deposit.getOpenDate().lengthOfYear();
     double percentForDay = deposit.getYearPercent() / daysInYear;

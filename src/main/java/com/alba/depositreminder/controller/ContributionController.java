@@ -1,10 +1,9 @@
 package com.alba.depositreminder.controller;
 
 import com.alba.depositreminder.dto.ContributionDto;
-import com.alba.depositreminder.exception.ApiRequestException;
+import com.alba.depositreminder.mapper.ContributionMapper;
 import com.alba.depositreminder.model.Contribution;
 import com.alba.depositreminder.service.ContributionService;
-import com.alba.depositreminder.service.DepositService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContributionController {
 
   private final ContributionService contributionService;
-  private final DepositService depositService;
+  private final ContributionMapper mapper;
 
   @PostMapping()
   public void addNew(@RequestBody @Valid ContributionDto contributionDto) {
-    contributionService.save(convertToContribution(contributionDto));
+    contributionService.save(mapper.toContribution(contributionDto));
   }
 
   @PutMapping("/{id}")
@@ -41,15 +40,4 @@ public class ContributionController {
     contributionService.delete(id);
   }
 
-  private Contribution convertToContribution(ContributionDto contributionDto) {
-    Integer depositId = contributionDto.getDepositId();
-    if (depositId == null) {
-      throw new ApiRequestException("New contribution must have depositId");
-    }
-    return Contribution.builder()
-        .date(contributionDto.getDate())
-        .sum(contributionDto.getSum())
-        .deposit(depositService.getById(depositId))
-        .build();
-  }
 }
